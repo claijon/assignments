@@ -38,14 +38,14 @@ autoplot(fit)
 X = cbind(educ)
 fit <- survfit(Surv(durat, fail) ~ X, data = offend)
 print(fit)
-autoplot(fit)
-
-
-fit <- survfit( survdat~1, se=FALSE)s
 autoplot(fit) +
   theme_bw() +
   xlab('GDP per capita') +
   ylab('Life expectancy')
+
+
+fit <- survfit( survdat~1, se=FALSE)s
+autoplot(fit)
 
 summary(fit)
 plot(fit)

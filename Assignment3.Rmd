@@ -50,11 +50,15 @@ head( offend )
   - educ      Years of schooling
   
 ### Time To Reoffend
+
 Showing that meddian 71 and mean 55.37 are the average times for reoffending.
+
 ```{r echo = FALSE}
 summary(time)
 ```
+
 Showing that 38.2% of this population experienced the failure event ( did not reoffend )
+
 ```{r echo = FALSE}
 summary(event)
 ```
@@ -70,13 +74,23 @@ Fitting the survival
 ```{r echo=FALSE}
 # fit survival
 fit <- survfit(Surv(time, event) ~ 1, data = offend)
+summary(fit)
+```
+
+The survival table shows time from 1 to 77.
+We see that the subjects starting are 1445 that at time 1, 8 had the event happening (reoffended). The survival hate was 0.994.
+The time 2 shows that 1437 ( that is 1445 - 8 - the censored ones from time 1 ) is the number of criminals. From these 15 had the event (reoffended ).
+The hazard rate for time 2  $$\frac{15}{1437} = {0.0104384}$$
+The survival rate goes down from 0.994 to 0.615
+
+```{r echo=FALSE}
 autoplot(fit) +
   theme_bw() +
   xlab('Time') +
   ylab('Survival Probability')
 ```
 
-# Cox Reggression Model
+# Cox Proportional Harzard Model
 
 A Cox regression model has been proposed to compare the time to reoffending, and particular interest is in the effect of the education duration and its effect on survival.
 Using the coxph() function, develop an appropriate model for predicting the time to reoffending.
@@ -86,3 +100,22 @@ Using the coxph() function, develop an appropriate model for predicting the time
 fit <- coxph(Surv(time,event)~X, data=offend)
 summary(fit)
 ```
+
+Interpreting the coefficients:
+
+  - criminals that use drugs will reoffend faster
+  - back criminals will reoffend faster
+  - criminals that are married will take longer to reoffend
+  - the more years in school the righer will talke for reoffences
+  
+Hazard Interpretation:
+
+  - criminals that use drugs will have 25.8% increase in the hazard rates
+  - black criminals will have 52.4% increase in the hazard rates
+  - criminals that are married will have 27.8% lower hazard rates
+  - criminals with more years in school will have 1.9% lower hazard rates
+
+# Conclusion
+
+The best model will not need the education covariate included as the analysis shows that it's insignificant its addition.
+We then have that we do not have enought evidence to suggest that years of education decreases the hazard rates.
