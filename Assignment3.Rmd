@@ -1,0 +1,81 @@
+---
+title: "Assignment3-StochasticModels"
+author: "Claijon da Silva"
+date: "8/5/2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# libraries
+library(survival)
+library(ggfortify) #install.packages('ggfortify')
+
+# get data
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents - Claijon’s MacBook Pro/DataAnalytics/StochasticModels/Assignment3")
+
+# store data in a object
+offend = read.csv('offend.csv', header = TRUE)
+attach(offend)
+
+# variables
+time <- durat
+event <- fail
+X = cbind(drugs, black, married, educ)
+
+
+```
+
+## Introduction
+
+This exercice will make the use of Kaplan-Meier estimate and Cox Regression to perform a Survival analysis on a data set of 1445 criminals.
+R Programming language was used to assist in the analysis.
+
+## Data
+
+The frist few rows show the structure of the table.
+
+```{r echo = FALSE}
+head( offend )
+```
+
+  - durat     Time observed for
+  - fail      1=Reoffended; 0=Censored
+  - drugs     1=Yes; 0=No
+  - black     1=Yes; 0=No
+  - married   1=Yes; 0=No
+  - educ      Years of schooling
+  
+### Time To Reoffend
+Showing that meddian 71 and mean 55.37 are the average times for reoffending.
+```{r echo = FALSE}
+summary(time)
+```
+
+## Kaplan-Meier Estimate of time to reoffending for this population
+
+```{r echo=FALSE}
+head(Surv( time=durat, event=fail ))
+```
+
+Fitting the survival
+
+```{r echo=FALSE}
+# fit survival
+fit <- survfit(Surv(durat, fail) ~ 1, data = offend)
+autoplot(fit)
+```
+
+# Cox Reggression Model
+
+A Cox regression model has been proposed to compare the time to reoffending, and particular interest is in the effect of the education duration and its effect on survival.
+Using the coxph() function, develop an appropriate model for predicting the time to reoffending.
+
+```{r echo=FALSE}
+#fit=coxph(formula = Surv( durat, fail) ~ black, data = offend)
+fit <- coxph(Surv(durat,fail)~educ*black, data=offend)
+summary(fit)
+```
