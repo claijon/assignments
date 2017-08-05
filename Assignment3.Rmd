@@ -11,7 +11,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 
 # libraries
-library(survival)
+library(survival) #install.packages('ggfortify')
 library(ggfortify) #install.packages('ggfortify')
 
 # get data
@@ -54,19 +54,26 @@ Showing that meddian 71 and mean 55.37 are the average times for reoffending.
 ```{r echo = FALSE}
 summary(time)
 ```
+Showing that 38.2% of this population experienced the failure event ( did not reoffend )
+```{r echo = FALSE}
+summary(event)
+```
 
 ## Kaplan-Meier Estimate of time to reoffending for this population
 
 ```{r echo=FALSE}
-head(Surv( time=durat, event=fail ))
+head(Surv( time=time, event=event ))
 ```
 
 Fitting the survival
 
 ```{r echo=FALSE}
 # fit survival
-fit <- survfit(Surv(durat, fail) ~ 1, data = offend)
-autoplot(fit)
+fit <- survfit(Surv(time, event) ~ 1, data = offend)
+autoplot(fit) +
+  theme_bw() +
+  xlab('Time') +
+  ylab('Survival Probability')
 ```
 
 # Cox Reggression Model
@@ -76,6 +83,6 @@ Using the coxph() function, develop an appropriate model for predicting the time
 
 ```{r echo=FALSE}
 #fit=coxph(formula = Surv( durat, fail) ~ black, data = offend)
-fit <- coxph(Surv(durat,fail)~educ*black, data=offend)
+fit <- coxph(Surv(time,event)~X, data=offend)
 summary(fit)
 ```

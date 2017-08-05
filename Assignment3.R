@@ -42,7 +42,11 @@ autoplot(fit)
 
 
 fit <- survfit( survdat~1, se=FALSE)s
-autoplot(fit)
+autoplot(fit) +
+  theme_bw() +
+  xlab('GDP per capita') +
+  ylab('Life expectancy')
+
 summary(fit)
 plot(fit)
 str(fit)
