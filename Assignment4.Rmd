@@ -1,0 +1,112 @@
+---
+title: "Assignment4-StochasticModels"
+author: "Claijon da Silva"
+date: "18/08/2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# libraries
+library(dplyr)
+library(BayesLCA)
+
+# get data
+setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents - Claijon’s MacBook Pro/DataAnalytics/StochasticModels/Assignment4")
+
+# store data in a object
+hfm = read.csv('HarrisonFord.csv', header = TRUE)
+colnames(hfm) <- c("SW","ESB","RJ","LC","LA","F")
+
+```
+
+## Introduction
+
+This exercice will make the use of the Latent Class Analysis to investigate group similarities and clusters.
+
+## Data
+
+Nine hundred and forty three students were asked whether they very highly rated six different Harrison Ford movies or not (1=Yes, 0=No).
+A summary of the data is as follows:
+
+```{r echo = FALSE}
+head(hfm)
+summarise_all(hfm, funs(sum))
+
+```
+
+  - SW    Star Wars
+  - ESB   The Empire Strikes Back
+  - RJ    Return of the Jedi
+  - LC    Indiana Jones and the Last Crusade
+  - LA    Raiders of the Last Ark
+  - F     The Fugitive
+
+### Fitting Mixture Models
+
+```{r echo = FALSE}
+
+# Load relevant package (flexmix)
+library(mixtools)
+
+a = hfm[,1]
+b = hfm[,2]
+c = hfm[,3]
+d = hfm[,4]
+e = hfm[,5]
+f = hfm[,6]
+
+dat = cbind(a,b,c,d,e,f)
+colnames(dat) <- c("SW","ESB","RJ","LC","LA","F")
+
+dat <- makemultdata(a,b,c,d,e,f,cuts = median(c(a, b, c, d, e, f)))
+colnames(dat) <- c("SW","ESB","RJ","LC","LA","F")
+# Fit a G component mixture model
+G<-1
+fit <- multmixEM(dat, k=G)
+
+# Examine the fit
+summary(fit)
+```  
+
+### The Latent Class Analysis For 2 Groups
+
+```{r echo = FALSE}
+fit <- blca.em(hfm,2)
+fit
+plot(fit)
+```
+
+### The Latent Class Analysis For 3 Groups
+
+```{r echo = FALSE}
+fit <- blca.em(hfm,3)
+fit
+plot(fit)
+```
+
+### Flexmix
+
+```{r echo=FALSE}
+library(flexmix)
+
+```
+
+Fitting the survival
+
+```{r echo=FALSE}
+# fit survival
+
+```
+
+# Cox Reggression Model
+
+A Cox regression model has been proposed to compare the time to reoffending, and particular interest is in the effect of the education duration and its effect on survival.
+Using the coxph() function, develop an appropriate model for predicting the time to reoffending.
+
+```{r echo=FALSE}
+
+```
