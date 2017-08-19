@@ -14,13 +14,20 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(BayesLCA)
 
-# get data
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents - Claijon’s MacBook Pro/DataAnalytics/StochasticModels/Assignment4")
-
 # store data in a object
 hfm = read.csv('HarrisonFord.csv', header = TRUE)
 colnames(hfm) <- c("SW","ESB","RJ","LC","LA","F")
 
+# fit the model
+res = rep(NA, 6)
+for(i in 1:6){
+  fit <- blca.em(hfm,i)
+  res[i] = fit$BIC
+}
+index = which.max(res)
+
+# fit winner group
+fit <- blca.em(hfm,index)
 ```
 
 ## Introduction
@@ -45,68 +52,55 @@ summarise_all(hfm, funs(sum))
   - LA    Raiders of the Last Ark
   - F     The Fugitive
 
-### Fitting Mixture Models
+### The Latent Class Analysis
+Checking groups from 1 to 6 and choosing the highest BIC
 
 ```{r echo = FALSE}
+res
+cat("Groups:", index, "BIC:", res[index], sep=" ")
+prob = round( (0.996 * 0.912 * 0.994 * 0.768 * 0.953 * 0.732 *100 ), 2 )
+```
 
-# Load relevant package (flexmix)
-library(mixtools)
+### The Latent Class Analysis For 4 Groups
+Group probabilities
+Group 1   Group 2   Group 3   Group 4 
+0.350     0.339     0.192     0.119
 
-a = hfm[,1]
-b = hfm[,2]
-c = hfm[,3]
-d = hfm[,4]
-e = hfm[,5]
-f = hfm[,6]
+Within the groups, ie group 1, the probability for very high rate:
 
-dat = cbind(a,b,c,d,e,f)
-colnames(dat) <- c("SW","ESB","RJ","LC","LA","F")
+  - Star Wars is 99.6 %
+  - The Empire Strikes Back is 91.12%
+  - Return of the Jedi is 94.4%
+  - Indiana Jones and the Last Crusade is 76.8%
+  - Raiders of the Lost Ark is 95.3%
+  - The Fugitive is 73.2%
+  
+```{r echo = FALSE}
+library(knitr)
+groups = c(1,2,3,4)
+tab = as.data.frame(cbind("Groups" = groups, 
+                          "SW" = fit$itemprob[,1],
+                          "ESB" = fit$itemprob[,2],
+                          "RJ" = fit$itemprob[,3],
+                          "LC" = fit$itemprob[,4],
+                          "LA" = fit$itemprob[,5],
+                          "F" = fit$itemprob[,6]
+                          )
+)
+kable(round(tab,3))
+```
 
-dat <- makemultdata(a,b,c,d,e,f,cuts = median(c(a, b, c, d, e, f)))
-colnames(dat) <- c("SW","ESB","RJ","LC","LA","F")
-# Fit a G component mixture model
-G<-1
-fit <- multmixEM(dat, k=G)
+The probability of a member of group 1 to high rate all these movies is:
+0.996 * 0.912 * 0.994 * 0.768 * 0.953 * 0.732 = `r prob`%
 
-# Examine the fit
-summary(fit)
-```  
-
-### The Latent Class Analysis For 2 Groups
+## Graph The Result
 
 ```{r echo = FALSE}
-fit <- blca.em(hfm,2)
-fit
 plot(fit)
 ```
 
-### The Latent Class Analysis For 3 Groups
+The plot shows similarities among groups being that the 1st group seems to like all movies while the second group appears not to like any of Harrison Ford's movies. While group 3 and 4 show different tates for different movies.
 
-```{r echo = FALSE}
-fit <- blca.em(hfm,3)
-fit
-plot(fit)
-```
+## Conclusion
 
-### Flexmix
 
-```{r echo=FALSE}
-library(flexmix)
-
-```
-
-Fitting the survival
-
-```{r echo=FALSE}
-# fit survival
-
-```
-
-# Cox Reggression Model
-
-A Cox regression model has been proposed to compare the time to reoffending, and particular interest is in the effect of the education duration and its effect on survival.
-Using the coxph() function, develop an appropriate model for predicting the time to reoffending.
-
-```{r echo=FALSE}
-
-```

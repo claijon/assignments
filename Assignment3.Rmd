@@ -15,8 +15,6 @@ library(survival) #install.packages('ggfortify')
 library(ggfortify) #install.packages('ggfortify')
 
 # get data
-setwd("~/Library/Mobile Documents/com~apple~CloudDocs/Documents/Documents - Claijon’s MacBook Pro/DataAnalytics/StochasticModels/Assignment3")
-
 # store data in a object
 offend = read.csv('offend.csv', header = TRUE)
 attach(offend)
@@ -63,13 +61,13 @@ Showing that 38.2% of this population experienced the failure event ( did not re
 summary(event)
 ```
 
-## Kaplan-Meier Estimate of time to reoffending for this population
+### Kaplan-Meier Estimate of time to reoffending for this population
 
 ```{r echo=FALSE}
 head(Surv( time=time, event=event ))
 ```
 
-Fitting the survival
+## Fitting the survival
 
 ```{r echo=FALSE}
 # fit survival
